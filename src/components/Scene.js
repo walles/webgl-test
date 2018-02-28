@@ -23,7 +23,7 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.z = 4;
+    camera.position.z = 2;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     const geometry = new THREE.BoxGeometry(1, 1, 1);
