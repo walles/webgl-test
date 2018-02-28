@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+import Scene from './components/Scene';
+
 class App extends Component {
   render() {
     return (
@@ -12,6 +14,9 @@ class App extends Component {
         </header>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
+        </p>
+        <p>
+          <Scene />
         </p>
       </div>
     );
