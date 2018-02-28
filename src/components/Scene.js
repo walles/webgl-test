@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Scene.css';
 import * as THREE from 'three';
 
 class Scene extends Component {
@@ -81,7 +82,6 @@ class Scene extends Component {
   render() {
     return (
       <div
-        style={{ width: '400px', height: '400px' }}
         ref={(mount) => { this.mount = mount; }}
       />
     );

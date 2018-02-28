@@ -1,0 +1,9 @@
+div {
+  height: 400px;
+}
+
+/* Center canvas horizontally */
+canvas {
+  margin: auto;
+  display: block;
+}
