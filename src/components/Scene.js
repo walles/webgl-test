@@ -25,7 +25,7 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.y = 1;
+    camera.position.y = 3;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -56,9 +56,45 @@ class Scene extends Component {
   }
 
   createMesh() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({ color: '#ffffff' });
-    return new THREE.Mesh(geometry, material);
+    const width = 10;
+    const height = 10;
+
+    // Create vertices for our height map
+    var geom = new THREE.Geometry();
+    for (let i = 0; i < width * height; i++) {
+      const x = i % width - (width - 1) / 2;
+      const y = Math.random();
+      const z = Math.floor(i / width) - (height - 1) / 2;
+      geom.vertices.push(new THREE.Vector3(x, y, z));
+    }
+
+    // Create faces from our vertices
+    for (let i = 0; i < width * height; i++) {
+      if ((i % width) == (width - 1)) {
+        // We're in the rightmost column. This is a column in which faces end,
+        // and no new start.
+        continue;
+      }
+      if (i >= (width * (height - 1))) {
+        // We're in the last row. Faces end in this row, and no new start here.
+        continue;
+      }
+
+      const p0 = i;
+      const p_right = i + 1;
+      const p_down = i + width;
+      const p_right_down = i + width + 1;
+
+      geom.faces.push(new THREE.Face3(p0, p_right, p_down));
+      geom.faces.push(new THREE.Face3(p_down, p_right, p_right_down));
+    }
+
+    geom.computeFaceNormals();
+
+    const material = new THREE.MeshLambertMaterial();
+    material.side = THREE.DoubleSide;
+
+    return new THREE.Mesh( geom, material );
   }
 
   componentWillUnmount() {
