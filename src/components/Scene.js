@@ -69,7 +69,17 @@ class Scene extends Component {
     }
 
     // Create faces from our vertices
-    for (let i = 0; i < (width - 1) * (height - 1); i++) {
+    for (let i = 0; i < width * height; i++) {
+      if ((i % width) == (width - 1)) {
+        // We're in the rightmost column. This is a column in which faces end,
+        // and no new start.
+        continue;
+      }
+      if (i >= (width * (height - 1))) {
+        // We're in the last row. Faces end in this row, and no new start here.
+        continue;
+      }
+
       const p0 = i;
       const p_right = i + 1;
       const p_down = i + width;
