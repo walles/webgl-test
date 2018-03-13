@@ -56,9 +56,22 @@ class Scene extends Component {
   }
 
   createMesh() {
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({ color: '#ffffff' });
-    return new THREE.Mesh(geometry, material);
+    var geom = new THREE.Geometry();
+    var v1 = new THREE.Vector3(0, 0,   0);
+    var v2 = new THREE.Vector3(0, 0.5, 0);
+    var v3 = new THREE.Vector3(0, 0.5, 0.5);
+
+    geom.vertices.push(v1);
+    geom.vertices.push(v2);
+    geom.vertices.push(v3);
+
+    geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
+    geom.computeFaceNormals();
+
+    const material = new THREE.MeshLambertMaterial();
+    material.side = THREE.DoubleSide;
+
+    return new THREE.Mesh( geom, material );
   }
 
   componentWillUnmount() {
