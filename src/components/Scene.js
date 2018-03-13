@@ -28,11 +28,8 @@ class Scene extends Component {
     camera.position.y = 1;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({ color: '#ffffff' });
 
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    scene.add(this.createMesh());
 
     // create a point light
     const pointLight = new THREE.PointLight(0xff8888);
@@ -53,11 +50,15 @@ class Scene extends Component {
     this.scene = scene;
     this.camera = camera;
     this.renderer = renderer;
-    this.material = material;
-    this.cube = cube;
 
     this.mount.appendChild(this.renderer.domElement);
     this.start();
+  }
+
+  createMesh() {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshLambertMaterial({ color: '#ffffff' });
+    return new THREE.Mesh(geometry, material);
   }
 
   componentWillUnmount() {
