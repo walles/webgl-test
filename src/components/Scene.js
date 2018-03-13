@@ -9,6 +9,8 @@ class Scene extends Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
+    this.camera_angle_rad = 0;  // In radians
+    this.camera_distance = 2;   // From center
   }
 
   componentDidMount() {
@@ -23,21 +25,27 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.z = 2;
+    camera.position.y = 1;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({ color: '#00ff00' });
+    const material = new THREE.MeshLambertMaterial({ color: '#ffffff' });
 
     const cube = new THREE.Mesh(geometry, material);
     scene.add(cube);
 
     // create a point light
-    const pointLight = new THREE.PointLight(0xFFFFFF);
-    pointLight.position.x = 1;
-    pointLight.position.y = 0;
-    pointLight.position.z = 3;
+    const pointLight = new THREE.PointLight(0xff8888);
+    pointLight.position.x = 2;
+    pointLight.position.y = 2;
+    pointLight.position.z = 2;
     scene.add(pointLight);
+
+    const pointLight2 = new THREE.PointLight(0x88ff88);
+    pointLight2.position.x = -2;
+    pointLight2.position.y = 2;
+    pointLight2.position.z = -2;
+    scene.add(pointLight2);
 
     renderer.setClearColor('#000000');
     renderer.setSize(width, height);
@@ -68,8 +76,10 @@ class Scene extends Component {
   }
 
   animate() {
-    this.cube.rotation.x += 0.01;
-    this.cube.rotation.y += 0.02;
+    this.camera_angle_rad += 0.01;
+    this.camera.position.x = this.camera_distance * Math.cos(this.camera_angle_rad);
+    this.camera.position.z = this.camera_distance * Math.sin(this.camera_angle_rad);
+    this.camera.lookAt(0, 0, 0);
 
     this.renderScene();
     this.frameId = window.requestAnimationFrame(this.animate);
