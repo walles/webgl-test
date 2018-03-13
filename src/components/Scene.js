@@ -25,7 +25,7 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.y = 1;
+    camera.position.y = 3;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -56,16 +56,29 @@ class Scene extends Component {
   }
 
   createMesh() {
+    const width = 10;
+    const height = 10;
+
+    // Create vertices for our height map
     var geom = new THREE.Geometry();
-    var v1 = new THREE.Vector3(0, 0,   0);
-    var v2 = new THREE.Vector3(0, 0.5, 0);
-    var v3 = new THREE.Vector3(0, 0.5, 0.5);
+    for (let i = 0; i < width * height; i++) {
+      const x = i % width - (width - 1) / 2;
+      const y = Math.random();
+      const z = Math.floor(i / width) - (height - 1) / 2;
+      geom.vertices.push(new THREE.Vector3(x, y, z));
+    }
 
-    geom.vertices.push(v1);
-    geom.vertices.push(v2);
-    geom.vertices.push(v3);
+    // Create faces from our vertices
+    for (let i = 0; i < (width - 1) * (height - 1); i++) {
+      const p0 = i;
+      const p_right = i + 1;
+      const p_down = i + width;
+      const p_right_down = i + width + 1;
 
-    geom.faces.push( new THREE.Face3( 0, 1, 2 ) );
+      geom.faces.push(new THREE.Face3(p0, p_right, p_down));
+      geom.faces.push(new THREE.Face3(p_down, p_right, p_right_down));
+    }
+
     geom.computeFaceNormals();
 
     const material = new THREE.MeshLambertMaterial();
