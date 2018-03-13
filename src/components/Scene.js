@@ -113,7 +113,7 @@ class Scene extends Component {
   }
 
   animate() {
-    this.camera_angle_rad += 0.01;
+    this.camera_angle_rad += 0.001;
     this.camera.position.x = this.camera_distance * Math.cos(this.camera_angle_rad);
     this.camera.position.z = this.camera_distance * Math.sin(this.camera_angle_rad);
     this.camera.lookAt(0, 0, 0);
