@@ -36,9 +36,10 @@ class Scene extends Component {
     scene.add(this.mesh);
 
     // Lighting!
-    const light = new THREE.DirectionalLight(0xffffcc, 1.0);
+    const light = new THREE.DirectionalLight(0xfcd440, 1.0);
     light.position.y = 2;
     scene.add(light);
+    scene.add(new THREE.AmbientLight(0x87cefa, .2));
 
     renderer.setClearColor('#000000');
     renderer.setSize(width, height);
