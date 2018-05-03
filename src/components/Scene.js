@@ -9,8 +9,9 @@ class Scene extends Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
-    this.camera_angle_rad = 0;  // In radians
-    this.camera_distance = 2;   // From center
+
+    this.mesh_width = 10;
+    this.mesh_height = 10;
   }
 
   componentDidMount() {
@@ -25,24 +26,19 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.y = 3;
+    camera.position.y = 1.5;
+    camera.position.z = 4;
+    camera.lookAt(0, 0, 2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    scene.add(this.createMesh());
+    this.mesh = this.createMesh();
+    scene.add(this.mesh);
 
-    // create a point light
-    const pointLight = new THREE.PointLight(0xff8888);
-    pointLight.position.x = 2;
-    pointLight.position.y = 2;
-    pointLight.position.z = 2;
-    scene.add(pointLight);
-
-    const pointLight2 = new THREE.PointLight(0x88ff88);
-    pointLight2.position.x = -2;
-    pointLight2.position.y = 2;
-    pointLight2.position.z = -2;
-    scene.add(pointLight2);
+    // Lighting!
+    const light = new THREE.DirectionalLight(0xffffcc, 1.0);
+    light.position.y = 2;
+    scene.add(light);
 
     renderer.setClearColor('#000000');
     renderer.setSize(width, height);
@@ -56,8 +52,8 @@ class Scene extends Component {
   }
 
   createMesh() {
-    const width = 10;
-    const height = 10;
+    const width = this.mesh_width;
+    const height = this.mesh_height;
 
     // Create vertices for our height map
     var geom = new THREE.Geometry();
@@ -97,6 +93,27 @@ class Scene extends Component {
     return new THREE.Mesh( geom, material );
   }
 
+  shiftTerrain() {
+    const width = this.mesh_width;
+    const height = this.mesh_height;
+
+    for (let i = (width * height - 1) ; i >= width; i--) {
+      const vertex = this.mesh.geometry.vertices[i];
+      const next_row_vertex = this.mesh.geometry.vertices[i - width];
+      vertex.set(vertex.x, next_row_vertex.y, vertex.z);
+    }
+    for (let i = 0; i < width; i++) {
+      const vertex = this.mesh.geometry.vertices[i];
+      vertex.set(vertex.x, Math.random(), vertex.z);
+    }
+
+    // Inspired by: https://github.com/mrdoob/three.js/issues/972#issuecomment-3281981
+    const geometry = this.mesh.geometry;
+    geometry.verticesNeedUpdate = true;
+    geometry.normalsNeedUpdate = true;
+    geometry.computeFaceNormals();
+  }
+
   componentWillUnmount() {
     this.stop();
     this.mount.removeChild(this.renderer.domElement);
@@ -113,10 +130,11 @@ class Scene extends Component {
   }
 
   animate() {
-    this.camera_angle_rad += 0.001;
-    this.camera.position.x = this.camera_distance * Math.cos(this.camera_angle_rad);
-    this.camera.position.z = this.camera_distance * Math.sin(this.camera_angle_rad);
-    this.camera.lookAt(0, 0, 0);
+    this.mesh.position.z += 0.01;
+    while (this.mesh.position.z > 1.0) {
+      this.shiftTerrain();
+      this.mesh.position.z -= 1.0;
+    }
 
     this.renderScene();
     this.frameId = window.requestAnimationFrame(this.animate);
