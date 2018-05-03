@@ -26,8 +26,9 @@ class Scene extends Component {
       0.1,
       1000
     );
-    camera.position.y = 3;
-    camera.lookAt(0, 0, -3);
+    camera.position.y = 1.5;
+    camera.position.z = 4;
+    camera.lookAt(0, 0, 2);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -35,9 +36,9 @@ class Scene extends Component {
     scene.add(this.mesh);
 
     // Lighting!
-    this.light = new THREE.DirectionalLight(0xffffcc, 1.0);
-    this.light.position.y = 2;
-    scene.add(this.light);
+    const light = new THREE.DirectionalLight(0xffffcc, 1.0);
+    light.position.y = 2;
+    scene.add(light);
 
     renderer.setClearColor('#000000');
     renderer.setSize(width, height);
@@ -106,7 +107,11 @@ class Scene extends Component {
       vertex.set(vertex.x, Math.random(), vertex.z);
     }
 
-    this.mesh.geometry.verticesNeedUpdate = true;
+    // Inspired by: https://github.com/mrdoob/three.js/issues/972#issuecomment-3281981
+    const geometry = this.mesh.geometry;
+    geometry.verticesNeedUpdate = true;
+    geometry.normalsNeedUpdate = true;
+    geometry.computeFaceNormals();
   }
 
   componentWillUnmount() {
@@ -125,10 +130,10 @@ class Scene extends Component {
   }
 
   animate() {
-    this.camera.position.z -= 0.01;
-    while (this.camera.position.z < -1.0) {
+    this.mesh.position.z += 0.01;
+    while (this.mesh.position.z > 1.0) {
       this.shiftTerrain();
-      this.camera.position.z += 1.0;
+      this.mesh.position.z -= 1.0;
     }
 
     this.renderScene();
