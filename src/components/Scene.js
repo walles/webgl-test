@@ -9,8 +9,6 @@ class Scene extends Component {
     this.start = this.start.bind(this);
     this.stop = this.stop.bind(this);
     this.animate = this.animate.bind(this);
-    this.camera_angle_rad = 0;  // In radians
-    this.camera_distance = 2;   // From center
   }
 
   componentDidMount() {
@@ -26,10 +24,12 @@ class Scene extends Component {
       1000
     );
     camera.position.y = 3;
+    camera.lookAt(0, 0, -3);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
 
-    scene.add(this.createMesh());
+    this.mesh = this.createMesh();
+    scene.add(this.mesh);
 
     // create a point light
     const pointLight = new THREE.PointLight(0xff8888);
@@ -113,10 +113,11 @@ class Scene extends Component {
   }
 
   animate() {
-    this.camera_angle_rad += 0.001;
-    this.camera.position.x = this.camera_distance * Math.cos(this.camera_angle_rad);
-    this.camera.position.z = this.camera_distance * Math.sin(this.camera_angle_rad);
-    this.camera.lookAt(0, 0, 0);
+    this.camera.position.z -= 0.01;
+    while (this.camera.position.z < -1.0) {
+      // FIMXE: Add more terrain
+      this.camera.position.z += 1.0;
+    }
 
     this.renderScene();
     this.frameId = window.requestAnimationFrame(this.animate);
